@@ -5,9 +5,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <fcntl.h>
-#include <errno.h>
-#include <signal.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <sys/stat.h>
@@ -16,7 +13,6 @@
 void display_prompt(void);
 char *read_command(void);
 void execute_command(char *command, char *program_name);
-int is_valid_command(char *command);
 void handle_error(char *program_name, char *command);
 
 /* external var for environment */

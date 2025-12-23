@@ -5,7 +5,8 @@
 */
 void display_prompt(void)
 {
-write(STDOUT_FILENO, PROMPT, sizeof(PROMPT) - 1);
+const char prompt[] = "($)";
+write(STDOUT_FILENO, prompt, sizeof(prompt) - 1);
 }
 
 /**
