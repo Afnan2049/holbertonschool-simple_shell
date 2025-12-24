@@ -12,7 +12,7 @@ int main(void)
     while (1)
     {
         if (isatty(STDIN_FILENO))
-            write(STDOUT_FILENO, "$ ", 3);
+            write(STDOUT_FILENO, "$ ", 2);
 
         nread = getline(&line, &len, stdin);
         if (nread == -1)
@@ -28,19 +28,19 @@ int main(void)
         if (*command == '\0')
             continue;
 
-        /* Split command into argv */
+        /* This part handles the arguments */
         i = 0;
         argv[i] = strtok(command, " \t");
-        while (argv[i] && i < 63)
+        while (argv[i] != NULL && i < 63)
         {
             i++;
             argv[i] = strtok(NULL, " \t");
         }
         argv[i] = NULL;
 
-        execute_command(argv);
+        if (argv[0] != NULL)
+            execute_command(argv);
     }
-
     free(line);
-    return 0;
+    return (0);
 }
