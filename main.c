@@ -1,42 +1,46 @@
 #include "shell.h"
 
-/**
-* main - Entry point for the simple shell
-* @argc: Argument count
-* @argv: Argument vector (program name)
-* Return: Always 0
-*/
-int main(int argc, char **argv)
+int main(void)
 {
-char *command;
-char *program_name = argv[0];
-(void)argc;
+    char *line = NULL;
+    size_t len = 0;
+    ssize_t nread;
+    char *argv[64];
+    char *command;
+    int i;
 
-while (1)
-{
-if (isatty(STDIN_FILENO))
-display_prompt();
+    while (1)
+    {
+        if (isatty(STDIN_FILENO))
+            write(STDOUT_FILENO, "$ ", 3);
 
-/* Read command from user */
-command = read_command();
+        nread = getline(&line, &len, stdin);
+        if (nread == -1)
+        {
+            free(line);
+            exit(0);
+        }
 
-/* Handle EOF (Ctrl+D) */
-if (command == NULL)
-{
-if (isatty(STDIN_FILENO))
-write(STDOUT_FILENO, "\n", 1);
-free(command);
-exit(EXIT_SUCCESS);
-}
+        if (line[nread - 1] == '\n')
+            line[nread - 1] = '\0';
 
-/* Execute the command */
-if (command[0] != '\0')
-{
-execute_command(command, program_name);
-}
+        command = trim_spaces(line);
+        if (*command == '\0')
+            continue;
 
-free(command);
-}
+        /* Split command into argv */
+        i = 0;
+        argv[i] = strtok(command, " \t");
+        while (argv[i] && i < 63)
+        {
+            i++;
+            argv[i] = strtok(NULL, " \t");
+        }
+        argv[i] = NULL;
 
-return (0);
+        execute_command(argv);
+    }
+
+    free(line);
+    return 0;
 }
