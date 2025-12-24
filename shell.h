@@ -24,5 +24,7 @@ extern char **environ;
 #define PROMPT "($)"
 #define ERRFILE "No such file or directory\n"
 #define ERRFOUND "not found\n"
+int resolve_command(const char *cmd, char *out, size_t outsz);
+int run_external(char **argv, char **envp, const char *progname, int cmd_no);
 
 #endif /* SHELL_H */
