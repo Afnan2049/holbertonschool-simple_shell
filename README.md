@@ -19,13 +19,13 @@
 ---
 
 ---
-### | Project Files | File | Description | 
-| :------: | :-------------: | 
-| main.c | Entry point of the shell; contains the infinite loop and input reading logic. |
-| shell.c | Contains helper functions for string trimming and command execution. |
-|shell.h | Header file containing function prototypes, macros, and standard library includes. |
-| man_1_simple_shell | Manual page for the custom shell. | 
-| AUTHORS | List of contributors to the project. |
+### |Project Files|File|Description| 
+|:------:|:-------------:|
+|main.c|Entry point of the shell; contains the infinite loop and input reading logic|
+|shell.c|Contains helper functions for string trimming and command execution|
+|shell.h|Header file containing function prototypes, macros, and standard library includes|
+|man_1_simple_shell |Manual page for the custom shell|
+|AUTHORS|List of contributors to the project|
 ---
 
 ---
