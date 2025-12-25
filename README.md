@@ -1,16 +1,16 @@
 # C - Simple Shell
 
 ---
-###this simple shell project is a simple implementation of a UNIX command interpreter written in C. It imitates the behaviour of the standard shell by handling user commands, executing programmes by their full paths, and mimics the behaviour of /bin/sh. It reads user input, analyses arguments, and executes system commands. It demonstrates a deep understanding of low-level system calls, memory management, and process synchronization.
+### this simple shell project is a simple implementation of a UNIX command interpreter written in C. It imitates the behaviour of the standard shell by handling user commands, executing programmes by their full paths, and mimics the behaviour of /bin/sh. It reads user input, analyses arguments, and executes system commands. It demonstrates a deep understanding of low-level system calls, memory management, and process synchronization.
 ---
 
 ---
 ## Table of Contents
--Description 
--Project Files
--Requirements 
--Compilation & Usage 
--Authors
+- Description 
+- Project Files
+- Requirements 
+- Compilation & Usage 
+- Authors
 ---
 
 ---
@@ -39,7 +39,7 @@
 ---
 
 ---
-##Compilation:
+## Compilation:
 
 To compile and run the simple shell, run the following commands:
 
@@ -49,18 +49,18 @@ gcc -Wall -Werror -Wextra -pedantic -std=gnu89 *.c -o hsh
 ---
 
 ---
-##Authors:
+## Authors:
 
--Salman Ghannam Al-Motairi
--Location: Riyadh, Saudi Arabia
--Student at Holberton School
--Email: sloome222@gmail.com
--GitHub: https://github.com/salman-ghannam1
+- Salman Ghannam Al-Motairi
+- Location: Riyadh, Saudi Arabia
+- Student at Holberton School
+- Email: sloome222@gmail.com
+- GitHub: salman-ghannam1
 
 Afnan Mohammed Alfaidi
 Location: Riyadh, Saudi Arabia
 Physics graduate from the University of Jeddah
 Student at Holberton School
 Email: alfaidi.afnan@gmail.com
-GitHub: https://github.com/Afnan2049
+GitHub: Afnan2049
 ---
