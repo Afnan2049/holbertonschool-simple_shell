@@ -58,6 +58,8 @@ gcc -Wall -Werror -Wextra -pedantic -std=gnu89 *.c -o hsh
 - Email: sloome222@gmail.com
 - GitHub: salman-ghannam1
 
+--
+
 - Afnan Mohammed Alfaidi
 - Location: Riyadh, Saudi Arabia
 - Physics graduate from the University of Jeddah
