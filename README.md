@@ -19,7 +19,7 @@
 ---
 
 ---
-### |Project Files|File|Description| 
+|Project Files|File|Description| 
 |:------:|:-------------:|
 |main.c|Entry point of the shell; contains the infinite loop and input reading logic|
 |shell.c|Contains helper functions for string trimming and command execution|
