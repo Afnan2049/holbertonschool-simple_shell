@@ -1,13 +1,16 @@
 #include "shell.h"
 
-int main(void)
+int main(int argc, char **argv, char **envp)
 {
     char *line = NULL;
     size_t len = 0;
     ssize_t nread;
-    char *argv[64];
-    char *command;
+    char *args[64];
+    char *cmd;
     int i;
+    int cmd_no = 0;
+
+    (void)argc;
 
     while (1)
     {
@@ -17,30 +20,35 @@ int main(void)
         nread = getline(&line, &len, stdin);
         if (nread == -1)
         {
+            if (isatty(STDIN_FILENO))
+                write(STDOUT_FILENO, "\n", 1);
             free(line);
-            exit(0);
+            return (0);
         }
 
-        if (line[nread - 1] == '\n')
+        cmd_no++; /* counts every read line */
+
+        if (nread > 0 && line[nread - 1] == '\n')
             line[nread - 1] = '\0';
 
-        command = trim_spaces(line);
-        if (*command == '\0')
+        cmd = trim_spaces(line);
+        if (!cmd || *cmd == '\0')
             continue;
 
-        /* This part handles the arguments */
+        /* tokenize */
         i = 0;
-        argv[i] = strtok(command, " \t");
-        while (argv[i] != NULL && i < 63)
+        args[i] = strtok(cmd, " \t");
+        while (args[i] != NULL && i < 63)
         {
             i++;
-            argv[i] = strtok(NULL, " \t");
+            args[i] = strtok(NULL, " \t");
         }
-        argv[i] = NULL;
+        args[i] = NULL;
 
-        if (argv[0] != NULL)
-            execute_command(argv);
+        if (args[0] != NULL)
+            run_external(args, envp, argv[0], cmd_no);
     }
+
     free(line);
     return (0);
 }
