@@ -23,5 +23,6 @@ int resolve_command(char *cmd, char *out, size_t outsz, char **envp);
 
 /* execute */
 int run_external(char **argv, char **envp, const char *progname, int cmd_no);
+int builtin_env(char **envp);
 
 #endif /* SHELL_H */

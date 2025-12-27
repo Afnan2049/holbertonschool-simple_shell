@@ -36,6 +36,7 @@ int main(int argc, char **argv, char **envp)
         if (!cmd || *cmd == '\0')
             continue;
 
+        /* tokenize input */
         i = 0;
         args[i] = strtok(cmd, " \t");
         while (args[i] != NULL && i < 63)
@@ -54,6 +55,14 @@ int main(int argc, char **argv, char **envp)
                 exit(last_status);
             }
 
+            /* built-in: env */
+            if (strcmp(args[0], "env") == 0)
+            {
+                last_status = builtin_env(envp);
+                continue;
+            }
+
+            /* external command */
             last_status = run_external(args, envp, argv[0], cmd_no);
         }
     }
