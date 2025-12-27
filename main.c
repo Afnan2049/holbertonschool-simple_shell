@@ -9,6 +9,7 @@ int main(int argc, char **argv, char **envp)
     char *cmd;
     int i;
     int cmd_no = 0;
+    int last_status = 0;
 
     (void)argc;
 
@@ -23,10 +24,10 @@ int main(int argc, char **argv, char **envp)
             if (isatty(STDIN_FILENO))
                 write(STDOUT_FILENO, "\n", 1);
             free(line);
-            return (0);
+            return (last_status);
         }
 
-        cmd_no++; /* counts every read line */
+        cmd_no++;
 
         if (nread > 0 && line[nread - 1] == '\n')
             line[nread - 1] = '\0';
@@ -35,7 +36,6 @@ int main(int argc, char **argv, char **envp)
         if (!cmd || *cmd == '\0')
             continue;
 
-        /* tokenize */
         i = 0;
         args[i] = strtok(cmd, " \t");
         while (args[i] != NULL && i < 63)
@@ -46,9 +46,9 @@ int main(int argc, char **argv, char **envp)
         args[i] = NULL;
 
         if (args[0] != NULL)
-            run_external(args, envp, argv[0], cmd_no);
+            last_status = run_external(args, envp, argv[0], cmd_no);
     }
 
     free(line);
-    return (0);
+    return (last_status);
 }
