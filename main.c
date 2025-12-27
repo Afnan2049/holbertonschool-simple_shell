@@ -24,7 +24,7 @@ int main(int argc, char **argv, char **envp)
             if (isatty(STDIN_FILENO))
                 write(STDOUT_FILENO, "\n", 1);
             free(line);
-            return (last_status);
+            return last_status;
         }
 
         cmd_no++;
@@ -46,9 +46,15 @@ int main(int argc, char **argv, char **envp)
         args[i] = NULL;
 
         if (args[0] != NULL)
-            last_status = run_external(args, envp, argv[0], cmd_no);
-    }
+        {
+            /* built-in: exit */
+            if (strcmp(args[0], "exit") == 0)
+            {
+                free(line);
+                exit(last_status);
+            }
 
-    free(line);
-    return (last_status);
+            last_status = run_external(args, envp, argv[0], cmd_no);
+        }
+    }
 }
