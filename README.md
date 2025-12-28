@@ -1,29 +1,39 @@
 # C - Simple Shell
 
 ---
-### this simple shell project is a simple implementation of a UNIX command interpreter written in C. It imitates the behaviour of the standard shell by handling user commands, executing programmes by their full paths, and mimics the behaviour of /bin/sh. It reads user input, analyses arguments, and executes system commands. It demonstrates a deep understanding of low-level system calls, memory management, and process synchronization.
+### this simple shell project is a simple implementation of a UNIX command interpreter written in C. It imitates the core behaviour of /bin/sh, the standard shell, by handling user commands, analyzing arguments, and environment management. By building this from scratch, we demonstrate a deep understanding of low-level system calls, the mechanics of process creation, memory management, and how the system locates executables using the PATH variable.
 ---
 
 ---
 ## Table of Contents
 - Description 
 - Project Files
+- Learning Objectives
 - Requirements 
 - Compilation & Usage 
 - Authors
 ---
 
 ---
-## Description
- This project is a simple UNIX command line interpreter (shell) written in C. It replicates basic functionalities of the `/bin/sh` shell, including command execution, and argument parsing.
+##Learning Objectives
+- Master system calls: fork, execve, wait, and access.
+- Implement manual PATH resolution without using getenv.
+- Manage the environment array (envp) and handle built-in commands.
+- Analyze user input into tokens using strtok.
+- Ensure robust error handling that matches the standard shell output format.
 ---
 
 ---
 | File | Description |
 | :--- | :--- |
-| **main.c** | Entry point of the shell; contains the infinite loop and input reading logic. |
-| **shell.c** | Contains helper functions for string trimming and command execution. |
+| **main.c** | The main execution loop; contains the input reading logic, reads input via getline, and manages the shell's logic. |
+| **shell.c** | Core process management; implements execute_command to handle the fork, execve, and wait lifecycle. |
 | **shell.h** | Header file containing function prototypes, macros, and standard library includes. |
+| **path.c** | Logic for locating commands. It searches through directories in the PATH environment variable. |
+| **exec.c** | Handles the process lifecycle: forking, executing external programs, and waiting for completion. |
+| **builtin_env.c** | Contains the env built-in function to print the current environment variables. |
+| **env.c** | Helper functions to extract values from the environment and find the current working directory. |
+| **trim.c** | Utility to clean user input by removing leading and trailing whitespace. |
 | **man_1_simple_shell** | Manual page for the custom shell. |
 | **AUTHORS** | List of contributors to the project. |
 ---
@@ -52,7 +62,7 @@ gcc -Wall -Werror -Wextra -pedantic -std=gnu89 *.c -o hsh
 ---
 ## Authors:
 
-- Salman Ghannam Al-Motairi
+- Salman Ghannam Al-Mutairi
 - Location: Riyadh, Saudi Arabia
 - Student at Holberton School
 - Email: sloome222@gmail.com
