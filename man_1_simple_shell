@@ -1,0 +1,37 @@
+.TH SIMPLE_SHELL 1 "DECEMBER 2025" "Holberton School" "Simple Shell Manual"
+.SH NAME
+hsh \- a simple UNIX command line interpreter
+.SH SYNOPSIS
+.B ./hsh
+.SH DESCRIPTION
+.B hsh
+is a command line interpreter that reads user input from the standard input and executes commands based on the environment and PATH. It is designed to mimic the basic behavior of /bin/sh.
+.SH FEATURES
+- Displays a prompt ($ ) in interactive mode.
+- Searches for commands in the PATH environment variable.
+- Handles command line arguments.
+- Includes built-in commands: \fBenv\fR and \fBexit\fR.
+.SH USAGE
+To start the shell, run the executable:
+.IP
+\fB./hsh\fR
+.PP
+The shell can be used in interactive mode by typing commands at the prompt, or in non-interactive mode by piping commands:
+.IP
+\fBecho "ls -l" | ./hsh\fR
+.SH COMMAND EXECUTION
+The shell executes commands by searching for the executable file in the directories specified in the \fBPATH\fR environment variable. If the command contains a slash (/), it is treated as a direct path and executed immediately if found.
+.SH BUILT-INS
+.TP
+\fBexit\fR
+Exits the shell with the status of the last command executed.
+.TP
+\fBenv\fR
+Prints the current environment variables.
+.SH BUGS
+No known bugs at this time.
+.SH AUTHORS
+Salman Ghannam Al-Motairi
+Afnan Mohammed Alfaidi
+.SH SEE ALSO
+sh(1), access(2), execve(2), fork(2), wait(2)
