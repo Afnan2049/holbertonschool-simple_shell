@@ -15,7 +15,7 @@
 ---
 
 ---
-##Learning Objectives
+## Learning Objectives
 - Master system calls: fork, execve, wait, and access.
 - Implement manual PATH resolution without using getenv.
 - Manage the environment array (envp) and handle built-in commands.
@@ -24,6 +24,7 @@
 ---
 
 ---
+## Project Files
 | File | Description |
 | :--- | :--- |
 | **main.c** | The main execution loop; contains the input reading logic, reads input via getline, and manages the shell's logic. |
