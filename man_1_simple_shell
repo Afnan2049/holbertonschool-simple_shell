@@ -1,73 +1,96 @@
-.TH SIMPLE_SHELL 1 "DECEMBER 2025" "Holberton School" "Simple Shell Manual"
+.\" Man page for hsh (Simple Shell)
+.TH HSH 1 "December 2025" "hsh 1.0" "User Commands"
 .SH NAME
-hsh \- a simple UNIX command line interpreter (Shell)
+hsh \- a custom UNIX command interpreter (Simple Shell)
 .SH SYNOPSIS
 .B ./hsh
 .SH DESCRIPTION
 .B hsh
-is a command line interpreter that provides a traditional UNIX user interface. It reads commands from standard input (either from a terminal or a pipe) and executes them. It follows the logic of the Bourne Shell (\fB/bin/sh\fR) by searching the \fBPATH\fR for executables and managing child processes.
+is a command line interpreter that provides a functional interface between the user and the UNIX operating system kernel. It is a simplified implementation of the Bourne Shell (\fIsh\fR) created as a fundamental systems programming project. 
 
-.SH PROJECT FILES
-The shell is built from several modular files, each handling a specific responsibility:
-.TP
-.B main.c
-The entry point. It manages the infinite loop, prints the prompt \fB($)\fR, and coordinates input reading.
-.TP
-.B shell.c
-Core process engine. Contains the logic for \fBforking\fR and \fBwaiting\fR for child processes.
-.TP
-.B path.c
-The location engine. It manually parses the \fBPATH\fR environment variable to find the absolute path of a command.
-.TP
-.B exec.c
-Execution wrapper. Links the path resolution and the process management together.
-.TP
-.B env.c / builtin_env.c
-Environment management. Handles internal access to environment variables without using \fBgetenv\fR.
-.TP
-.B trim.c
-Input sanitizer. Removes leading and trailing whitespace to ensure commands are parsed correctly.
+The shell serves as a Read-Eval-Print Loop (REPL) that:
+.IP 1. 3
+Displays a prompt and waits for user input.
+.IP 2. 3
+Reads and parses the command line into an array of strings (tokens).
+.IP 3. 3
+Identifies if the command is a built-in function or an external executable.
+.IP 4. 3
+Locates and executes the command in a new child process.
+.IP 5. 3
+Returns the exit status and repeats the cycle.
 
-.SH COMMAND EXECUTION
-To execute a command, the shell follows these steps:
-.IP 1. 
-The input is read and split into tokens (command and arguments).
-.IP 2. 
-If the command contains a slash (\fB/\fR), it attempts to execute that specific path.
-.IP 3. 
-If no slash is found, it searches every directory listed in the \fBPATH\fR environment variable.
-.IP 4. 
-Once found, a child process is created via \fBfork(2)\fR.
-.IP 5. 
-The child process replaces itself with the command using \fBexecve(2)\fR.
-.IP 6. 
-The parent process waits for the child to finish and captures the exit status.
+.SH MODES OF OPERATION
+.SS Interactive Mode
+In interactive mode, \fBhsh\fR displays the prompt \fB($ )\fR. It is triggered when the standard input is connected to a terminal. The shell handles the \fBnewline\fR character to execute commands and remains active until the user enters \fBexit\fR or generates an \fBEOF\fR (Ctrl+D).
 
-.SH BUILT-INS
-.TP
-\fBexit\fR
-Terminates the shell. If the shell was running a script or piped input, it returns the exit status of the last executed command.
-.TP
-\fBenv\fR
-Prints the current environment variables to standard output, one per line.
-
-.SH RETURN VALUE
-When exiting, \fBhsh\fR returns the exit status of the last command executed. If the end-of-file (EOF) is reached (via \fBCtrl+D\fR), the shell exits with status 0.
-
-.SH ERROR HANDLING
-If a command is not found, \fBhsh\fR prints an error message to \fBstderr\fR in the following format:
+.SS Non-Interactive Mode
+The shell can process commands from scripts or pipes. In this mode, no prompt is displayed. The shell reads from \fBstdin\fR line by line, executing commands until the end of the input stream is reached.
 .PP
 .RS
-\fBprog_name: line_number: command: not found\fR
+Example: \fB echo "ls -l" | ./hsh \fR
 .RE
 
-.SH BUGS
-Does not currently support shell variables, aliases, or advanced features like globbing (*, ?).
+.SH COMMAND EXECUTION LOGIC
+When a command is submitted, \fBhsh\fR performs a specific resolution sequence:
+.IP \(bu 2
+\fBBuilt-ins:\fR The shell first checks if the command is \fBexit\fR or \fBenv\fR. These are handled internally to manage the shell's state or print the environment directly without forking.
+.IP \(bu 2
+\fBAbsolute/Relative Paths:\fR If the command contains a \fB/\fR (e.g., \fI/bin/ls\fR or \fI./program\fR), the shell skips the path search and attempts to execute the file directly using \fBaccess(2)\fR to verify existence and \fBX_OK\fR permissions.
+.IP \(bu 2
+\fBPATH Searching:\fR If no slash is present, the shell retrieves the \fBPATH\fR environment variable. It manually splits the string by the \fB:\fR delimiter. It then prepends each directory to the command name and checks for an executable match.
+.IP \(bu 2
+\fBProcess Creation:\fR For external commands, \fBhsh\fR uses \fBfork(2)\fR to create a child process. The child process uses \fBexecve(2)\fR to replace its memory image with the new program, while the parent process uses \fBwaitpid(2)\fR to monitor the child's exit status.
 
-.SH AUTHORS
-Salman Ghannam Al-Mutairi
-Afnan Mohammed Alfaidi
+.SH INPUT HANDLING AND MEMORY
+.IP \(bu 2
+\fBTrimming:\fR The shell utilizes a custom \fBtrim_spaces\fR function to ignore leading or trailing whitespace, ensuring commands like "  ls  " are treated as "ls".
+.IP \(bu 2
+\fBTokenization:\fR Using \fBstrtok(3)\fR, the shell splits the input line based on spaces and tabs into an argument vector (\fIargv\fR).
+.IP \(bu 2
+\fBDynamic Memory:\fR Input lines are captured using \fBgetline(3)\fR, which dynamically allocates memory. The shell ensures all allocated buffers are \fBfree(3)\fRed before exiting to prevent memory leaks.
 
-.SH COPYRIGHT
-This project is part of the Holberton School.
-Use for educational and learning purposes only.
+.SH ENVIRONMENT
+The shell maintains an environment which is an array of strings. Although it does not use the standard \fBgetenv(3)\fR, it manually traverses the \fBenviron\fR array to find specific keys like \fBPATH\fR or \fBPWD\fR. 
+.IP \(bu 2
+\fBenv\fR: Displays the current environment variables.
+.IP \(bu 2
+\fBPATH\fR: Used to locate commands.
+.IP \(bu 2
+\fBPWD\fR: Used as a fallback for the current directory during path resolution.
+
+.SH ERROR OUTPUT
+Errors are printed to \fBstderr\fR. The error format is strictly defined to match \fB/bin/sh\fR:
+.PP
+\fI[argv[0]]: [line_count]: [command]: [message]\fR
+.PP
+Example: \fB./hsh: 1: unknown_cmd: not found\fR
+
+.SH EXIT STATUS
+\fBhsh\fR returns the status of the last command executed:
+.IP \(bu 2
+\fB0\fR: Success.
+.IP \(bu 2
+\fB127\fR: Command not found.
+.IP \(bu 2
+\fB126\fR: Command found but not executable.
+.IP \(bu 2
+\fB2\fR: Illegal number or incorrect usage.
+
+.SH FILES
+.TP
+.B shell.h
+Contains all function prototypes, structure definitions, and macro guards.
+.TP
+.B path.c
+Contains \fBresolve_command\fR, the core logic for PATH searching.
+.TP
+.B env.c
+Contains helper functions like \fBget_env_value\fR for manual environment parsing.
+.TP
+.B exec.c
+Contains \fBrun_external\fR, handling the fork/exec/wait cycle.
+
+.SH AUTHOR
+- Salman Ghannam Al-Mutairi
+- Afnan Mohammed Alfaidi
