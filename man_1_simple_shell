@@ -1,37 +1,73 @@
 .TH SIMPLE_SHELL 1 "DECEMBER 2025" "Holberton School" "Simple Shell Manual"
 .SH NAME
-hsh \- a simple UNIX command line interpreter
+hsh \- a simple UNIX command line interpreter (Shell)
 .SH SYNOPSIS
 .B ./hsh
 .SH DESCRIPTION
 .B hsh
-is a command line interpreter that reads user input from the standard input and executes commands based on the environment and PATH. It is designed to mimic the basic behavior of /bin/sh.
-.SH FEATURES
-- Displays a prompt ($ ) in interactive mode.
-- Searches for commands in the PATH environment variable.
-- Handles command line arguments.
-- Includes built-in commands: \fBenv\fR and \fBexit\fR.
-.SH USAGE
-To start the shell, run the executable:
-.IP
-\fB./hsh\fR
-.PP
-The shell can be used in interactive mode by typing commands at the prompt, or in non-interactive mode by piping commands:
-.IP
-\fBecho "ls -l" | ./hsh\fR
+is a command line interpreter that provides a traditional UNIX user interface. It reads commands from standard input (either from a terminal or a pipe) and executes them. It follows the logic of the Bourne Shell (\fB/bin/sh\fR) by searching the \fBPATH\fR for executables and managing child processes.
+
+.SH PROJECT FILES
+The shell is built from several modular files, each handling a specific responsibility:
+.TP
+.B main.c
+The entry point. It manages the infinite loop, prints the prompt \fB($)\fR, and coordinates input reading.
+.TP
+.B shell.c
+Core process engine. Contains the logic for \fBforking\fR and \fBwaiting\fR for child processes.
+.TP
+.B path.c
+The location engine. It manually parses the \fBPATH\fR environment variable to find the absolute path of a command.
+.TP
+.B exec.c
+Execution wrapper. Links the path resolution and the process management together.
+.TP
+.B env.c / builtin_env.c
+Environment management. Handles internal access to environment variables without using \fBgetenv\fR.
+.TP
+.B trim.c
+Input sanitizer. Removes leading and trailing whitespace to ensure commands are parsed correctly.
+
 .SH COMMAND EXECUTION
-The shell executes commands by searching for the executable file in the directories specified in the \fBPATH\fR environment variable. If the command contains a slash (/), it is treated as a direct path and executed immediately if found.
+To execute a command, the shell follows these steps:
+.IP 1. 
+The input is read and split into tokens (command and arguments).
+.IP 2. 
+If the command contains a slash (\fB/\fR), it attempts to execute that specific path.
+.IP 3. 
+If no slash is found, it searches every directory listed in the \fBPATH\fR environment variable.
+.IP 4. 
+Once found, a child process is created via \fBfork(2)\fR.
+.IP 5. 
+The child process replaces itself with the command using \fBexecve(2)\fR.
+.IP 6. 
+The parent process waits for the child to finish and captures the exit status.
+
 .SH BUILT-INS
 .TP
 \fBexit\fR
-Exits the shell with the status of the last command executed.
+Terminates the shell. If the shell was running a script or piped input, it returns the exit status of the last executed command.
 .TP
 \fBenv\fR
-Prints the current environment variables.
+Prints the current environment variables to standard output, one per line.
+
+.SH RETURN VALUE
+When exiting, \fBhsh\fR returns the exit status of the last command executed. If the end-of-file (EOF) is reached (via \fBCtrl+D\fR), the shell exits with status 0.
+
+.SH ERROR HANDLING
+If a command is not found, \fBhsh\fR prints an error message to \fBstderr\fR in the following format:
+.PP
+.RS
+\fBprog_name: line_number: command: not found\fR
+.RE
+
 .SH BUGS
-No known bugs at this time.
+Does not currently support shell variables, aliases, or advanced features like globbing (*, ?).
+
 .SH AUTHORS
-Salman Ghannam Al-Motairi
+Salman Ghannam Al-Mutairi
 Afnan Mohammed Alfaidi
-.SH SEE ALSO
-sh(1), access(2), execve(2), fork(2), wait(2)
+
+.SH COPYRIGHT
+This project is part of the Holberton School.
+Use for educational and learning purposes only.
